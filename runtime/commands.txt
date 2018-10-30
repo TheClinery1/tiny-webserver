@@ -1,0 +1,18 @@
+2014-11-28 12:00:09 New connection from: 127.0.0.1:45414 requesting: HTTP/1.1 500 SERVER ERROR
+
+<!DOCTYPE html><html><body><h1>If your seeing this then report it to the server owner.</h1><br><h2>There are no website files nor are there error pages.</body></html> response: 500
+2014-11-28 12:00:09 New connection from: 127.0.0.1:45416 requesting: HTTP/1.1 500 SERVER ERROR
+
+<!DOCTYPE html><html><body><h1>If your seeing this then report it to the server owner.</h1><br><h2>There are no website files nor are there error pages.</body></html> response: 500
+2014-11-28 12:00:09 New connection from: 127.0.0.1:45418 requesting: HTTP/1.1 500 SERVER ERROR
+
+<!DOCTYPE html><html><body><h1>If your seeing this then report it to the server owner.</h1><br><h2>There are no website files nor are there error pages.</body></html> response: 500
+2014-11-28 12:00:09 New connection from: 127.0.0.1:45420 requesting: HTTP/1.1 500 SERVER ERROR
+
+<!DOCTYPE html><html><body><h1>If your seeing this then report it to the server owner.</h1><br><h2>There are no website files nor are there error pages.</body></html> response: 500
+2014-11-28 12:00:09 New connection from: 127.0.0.1:45422 requesting: HTTP/1.1 500 SERVER ERROR
+
+<!DOCTYPE html><html><body><h1>If your seeing this then report it to the server owner.</h1><br><h2>There are no website files nor are there error pages.</body></html> response: 500
+2014-11-28 12:00:09 New connection from: 127.0.0.1:45424 requesting: HTTP/1.1 500 SERVER ERROR
+
+<!DOCTYPE html><html><body><h1>If your seeing this then report it to the server owner.</h1><br><h2>There are no website files nor are there error pages.</body></html> response: 500

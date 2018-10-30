@@ -18,7 +18,7 @@ fn main() {
     let mut command = String::new();
     io::stdin().read_line(&mut command).unwrap(); command.pop();
     let mut stream = TcpStream::connect(&address).unwrap();
-    fs::write("/test-webserver/config/commands.txt", &command);
+    fs::write("./commands.txt", &command);
     stream.write(&command.as_bytes()).unwrap();
     stream.shutdown(Both);
 }

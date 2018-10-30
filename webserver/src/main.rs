@@ -14,18 +14,20 @@ use chrono::{Utc, TimeZone};
 mod misc;
 
 fn main() {
-    /* OLD
-    eprint!("Input IP address: ");
-    let mut address = String::new();
-    io::stdin().read_line(&mut address).unwrap(); address.pop();
-    */
+    // DEBUG eprintln!("Server started");
     let mut config = Vec::<String>::new();
     config = misc::read_config();
     let listener = TcpListener::bind(format!("{}:{}", config[0], config[1]))
         .expect("An error occured at the TcpListener::bind");
     // DEBUG eprintln!("Going to try to open the command_file now...");
-    let mut log_file = OpenOptions::new().append(true).open("/test-webserver/logs/connections.log").unwrap();
-    let mut command_file = OpenOptions::new().write(true).read(true).open("/test-webserver/config/commands.txt").unwrap();
+    let mut log_file = match OpenOptions::new().append(true).open(&config[4]) {
+        Ok(x) => x,
+        Err(_) => create_file("./commands.txt".to_string(), true)
+    };
+    let mut command_file = match OpenOptions::new().write(true).read(true).open("./commands.txt") {
+        Ok(x) => x,
+        Err(_) => create_file("./commands.txt".to_string(), false)
+    };
     // DEBUG eprintln!("{:?}", config);
     for stream in listener.incoming() {
         let mut stream = stream.unwrap();
@@ -50,92 +52,23 @@ fn main() {
         } else if (string != "!stop") {
             if (string.contains("GET")) {
                 string = string[4..].to_string();
-                get_response = get(string.to_string(), stream, &config[2], &config[3]);
+                get_response = get(string.to_string(), stream, &config[2], &config[3], &config[5]);
             }
         }
         log_file.write(&format!("{} New connection from: {} requesting: {} response: {}\n", time, peer_addr, get_response[0], get_response[1]).as_bytes()).unwrap();
     }
 }
 
-fn get(request: String, mut stream: TcpStream, files_loc: &String, error_page_loc: &String) -> [String; 2] {
-    let mut return_value = [String::new(), String::new()];
-    let mut response = String::new();
-    let error_ok = String::from("HTTP/1.1 200 OK\r\n\r\n");
-    let error_not_found = String::from("HTTP/1.1 404 NOT FOUND\r\n\r\n");
-    // DEBUG println!("New request!\n{}", request);
-    let mut address = String::new();
-    let mut x = 0usize;
-    let mut is_dir = false;
-    if request.contains(".html") {
-        x = request.rfind(".html").unwrap() + 5;
-        return_value[0] = request[..x].to_string();
-    } else if request[..].contains("/ ") {
-        is_dir = true;
-        return_value[0] = request[..x].to_string();
-    }
-    // DEBUG eprintln!("Just another DEBUG for the address variable: {}", address);
-    address.push_str(files_loc);
-    if is_dir {
-        for iter in request.chars() {
-            if iter != ' ' {
-                address.push_str(&iter.to_string())
-            } else if iter == ' ' {
-                address.push_str("index.html");
-                break;
-            }
-        }
-    } else if !is_dir {
-        address.push_str(&request[..x]);
-    }
+fn create_file(file: String, append: bool) -> File {
+    File::create(file);
+    OpenOptions::new().append(append).write(true).read(true).open("./commands.txt").unwrap() // Returns the value when a ; isn't used at the end of the line.
+}
 
-    if address == files_loc.to_string() {
-        address.push_str("index.html");
-    }
-    let mut contents = String::new();
-    if Path::new(&address).exists() {
-        let mut file = File::open(&address);
-        let mut file = {
-            match file {
-                Ok(file) => file,
-                Err(_) => File::open(format!("{}/404.html", error_page_loc)).unwrap(),
-            }
-        };
-        let mut tmp = {
-            match file.read_to_string(&mut contents) {
-                Ok(_) => "!200",
-                Err(_) => "!404"
-            }
-        };
-        if (tmp == "!404" && tmp != "!200") { // Returns a 404 to the browser
-            return_value[1] = "404".to_string();
-            // DEBUG eprintln!("The !404 part is running now.");
-            // DEBUG eprintln!("The contents before read file: {}", contents);
-            contents.clear();
-            file = File::open(format!("{}/404.html", error_page_loc)).unwrap();
-            // DEBUG eprintln!("The contents after read file: {}", contents);
-            file.read_to_string(&mut contents);
-            response.push_str(&error_not_found);
-            response.push_str(&contents);
-        } else { // Returns a 200 to the browser
-            return_value[1] = "200".to_string();
-            // DEBUG eprintln!("The !good part is running now.");
-            // DEBUG eprintln!("The contents before read file: {}", contents);
-            contents.clear();
-            file = File::open(address).unwrap();
-            file.read_to_string(&mut contents);
-            // DEBUG eprintln!("The contents after read file: {}", contents);
-            response.push_str(&error_ok);
-            response.push_str(&contents);
-        }
-    } else { // Returns a 404 to the browser
-        return_value[1] = "404".to_string();
-        // DEBUG eprintln!("The master 'else' block is running!");
-        let mut file = File::open(format!("{}/404.html", error_page_loc)).unwrap();
-        file.read_to_string(&mut contents);
-        response.push_str(&error_ok);
-        response.push_str(&contents);
-    }
+fn get(request: String, mut stream: TcpStream, files_loc: &String, error_page_loc: &String, file_extension: &String) -> [String; 2] {
+    // DEBUG println!("New request!\n{}", request);
+    let mut response = misc::parse_request(request, files_loc.to_string(), error_page_loc.to_string(), file_extension.to_string()); // An array of 3 Strings
     // DEBUG eprintln!("This is the response: {}", response);
-    stream.write(&response.as_bytes());
+    stream.write(response[0].as_bytes());
+    let return_value = [response[0].clone(), response[1].clone()];
     return return_value;
 }
