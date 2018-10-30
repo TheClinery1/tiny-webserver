@@ -2,7 +2,7 @@ use std::fs::File;
 use std::io::{self, Read};
 
 pub fn read_config() -> Vec<String> {
-    let mut config_file_location = File::open("/test-webserver/config/config.conf")
+    let mut config_file_location = File::open("./config.conf")
         .expect("An error occured when the config was read.");
     let mut config_file = String::new();
     let mut newline = false;

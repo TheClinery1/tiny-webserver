@@ -1,1 +1,1 @@
-/home/clinery1/Desktop/test-webserver-commads/target/release/test-webserver-commads: /home/clinery1/Desktop/test-webserver-commads/src/main.rs /home/clinery1/Desktop/test-webserver-commads/src/parse_ip.rs
+/home/clinery1/Desktop/tiny-webserver/command_sender/target/release/test-webserver-commads: /home/clinery1/Desktop/tiny-webserver/command_sender/src/main.rs /home/clinery1/Desktop/tiny-webserver/command_sender/src/parse_ip.rs
